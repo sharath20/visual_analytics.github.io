@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>An IMDb Critic Ratig Visualization</title>
+
+    <!-- include css libraries -->
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/dc.css"/>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/iThing-min.css"></link>
+    <style type="text/css">
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0 auto;
+            padding-left: 0px;
+            overflow-x: hidden;
+        }
+        .container {
+            margin: auto;
+            width: 100%;
+        }
+        #YearSlider{
+            width:90%;
+            margin: 0 auto;
+        }
+        .aaa{
+            color: #3182bd;
+            font-weight: bold;
+        }
+    </style>
+
+    <!-- Include js libraries for d3, crossfilter, and dc -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="js/d3.js"></script>
+    <script type="text/javascript" src="js/crossfilter.js"></script>
+    <script type="text/javascript" src="js/dc.js"></script>
+    <script type="application/javascript" src="js/jquery-ui.min.js"></script>
+    <script type="application/javascript" src="js/jQAllRangeSliders-min.js"></script>
+</head>
+
+<body>
+<div class="container">
+    <div class="row" style="background-color: grey">
+        <div >
+           <center> <h1>An IMDB Critic Rating Visualization</h1>
+            <h2>By <a href="">Bodicharla Anand Sai, Venkat Ram Tummala, Sharath Mudhigonda</a></h2></center>
+        </div>
+    </div>
+
+    <!-- set up charts on page by row -->
+    
+    <div class="row">
+
+        <div class="col-lg-2 divGenre fixme" style="z-index: 100;background-color: grey;">
+            <h3 style="margin-top: 0px !important;margin-bottom: 0px !important;">Movie Genre</h3>
+        <br>
+        <div class="row" >
+        <input type="checkbox" id="action_id" name="type" value="action">
+        <label for="action_id"><h4>Action</h4></label>
+        </div>
+        <div class="row">
+        <input type="checkbox" id="thriller_id" name="type" value="thriller"> <label for="thriller_id"><h4>Thriller</h4></label>
+        </div>
+        <div class="row" >
+        <input type="checkbox" id="drama_id" name="type" value="drama"><label for="drama_id"><h4>Drama</h4></label>
+        </div>
+        <div class="row" >
+        <input type="checkbox" id="fantasy_id" name="type" value="fantasy"><label for="fantasy_id"><h4>Fantasy</h4></label>
+        </div>
+        <div class="row" >
+        <input type="checkbox" id="adventure_id" name="type" value="adventure"><label for="adventure_id"><h4>Adventure</h4></label>
+        </div>
+        <div class="row" >
+        <input type="checkbox" id="Romance" name="type" value="romance"><label for="Romance"><h4>Romance</h4></label>
+        </div>
+        <div class="row" >
+        <input type="checkbox" id="sci_id" name="type" value="sci-Fi"><label for="sci_id"><h4>Sci-Fi</h4></label>
+        </div>
+        <div class="row" >
+        <input type="checkbox" id="Family" name="type" value="family"><label for="Family"><h4>Family</h4></label>
+        </div>
+        <div class="row" >
+        <input type="checkbox" id="Sport" name="type" value="sport"><label for="Sport"><h4>Sport</h4></label>
+        </div>
+        <div class="row" >
+        <input type="checkbox" id="Animation" name="type" value="animation"><label for="Animation"><h4>Animation</h4></label>
+        </div>
+        <div class="row" >
+        <input type="checkbox" id="Comedy" name="type" value="comedy"><label for="Comedy"><h4>Comedy</h4></label>
+        </div>
+        <div class="row" >
+        <input type="checkbox" id="Crime" name="type" value="crime"><label for="Crime"><h4>Crime</h4>
+        </div>
+        <div class="row"><br></div>
+        <div class="row"><br></div>
+        <div class="row"><br></div>
+        <div class="row"><br></div>
+        <div class="row"><br></div>
+    </div>
+        <div class="col-lg-10" id ="main_content" style="position: relative;">
+            <div class="fixme1" style="z-index: 100;width:100%; ">
+                    <div class="row" style="align-content: center;background-color: grey;">
+                    <div class="dc-data-count">
+                    <h3 id="tit_1" style="margin-top: 0px !important;margin-bottom: 0px !important;position: relative;left: 57%;text-align: center;">
+                            <center>
+                                <span class="filter-count"></span> selected out of 
+                                <span class="aaa"> 4,935</span> movies -
+                                <a href="javascript:dc.filterAll(); dc.renderAll();">Reset All</a>
+                            </center>
+                        </h3>
+                    </div>    
+                    </div>
+                    <div class="row" style="background-color: grey;">  
+                    <center><h3 style="margin-top: 0px !important;margin-bottom: 0px !important;"> Year of the Movie</h3></center>
+                    <div id="Sliders">
+                        <div id="YearSlider"></div>
+                    </div>
+                    </div>
+            </div> 
+
+            <div class="row fixme2" style="padding-bottom:15px;">
+            
+                <div id="histogram">
+                    <h3>Number of Movies by Year</h3>
+                </div>
+            </div>
+            <div class="row fixme2" style="padding-bottom:15px;">
+                    <div id="histogram2">
+                        <h3>Number of Movies by IMDb Score</h3>
+                    </div>
+            </div>
+
+            <div class="row fixme2" style="padding-bottom:15px;">
+                 <div id="scatterplot">
+                    <h3>Movie Budget vs. Domestic Box Office Gross</h3>
+                </div>
+            </div>
+
+            <div class="row fixme2" style="padding-bottom:15px;">
+                <div id="heatmap">
+                    <h3>Movie Domestic Box Office Gross by IMDb Score and MPAA Rating</h3>
+                </div>
+
+                <div id="heatmapLegend"></div>
+            </div>     
+            <div class="row fixme2" style="padding-bottom:15px;">
+                <div id="serieschart">
+                    <h3>Average IMDb Score for each MPAA Rating by Year</h3>
+                </div>
+            </div>    
+            <div class="row fixme2" style="padding-bottom:15px;">
+                <div id="compositechart">
+                    <h3>Average Gross vs. Average Number of IMDb Votes by IMDb Rating</h3>
+                </div>  
+            </div>  
+        </div>
+
+    </div>
+
+    <script type="text/javascript">
+
+    var fixmeTop = $('.fixme').offset().top;
+    $(window).scroll(function() {
+    var currentScroll = $(window).scrollTop();
+    if (currentScroll >= fixmeTop) {
+            $('.fixme').css({
+                position: 'fixed',
+                top:'0'
+            });
+
+     } else {
+        $('.fixme').css({
+            position: 'static'
+        });
+    }
+});   
+
+    var fixmeTop1 = $('.fixme1').offset().top;
+    $(window).scroll(function() {
+    var currentScroll = $(window).scrollTop();
+    if (currentScroll >= fixmeTop1) {
+            $('.fixme1').css({
+                position: 'fixed',
+                top:'0'
+                // top:'-12',
+                // left: '200'
+            });
+            $('#main_content').css({
+                left: '16.7%'
+            })
+
+
+            $('#YearSlider').css({
+                
+            })
+            $('Sliders').css({
+                width:'60%'
+            })
+            $('.fixme2').css({
+                position:'relative',
+                left: '150'
+            });
+
+     } else {
+        $('.fixme1').css({
+            position: 'static'
+        });
+         $('#main_content').css({
+                left: '0'
+            })
+
+    }
+});   
+
+
+    // associate charts with above DOMs
+    var myHistogram = dc.barChart("#histogram");
+    var myHistogram2 = dc.barChart("#histogram2");
+    var myPiechart = dc.pieChart("#piechart");
+    var myScatterplot = dc.scatterPlot("#scatterplot");
+    var myHeatmap = dc.heatMap("#heatmap");
+    var myHeatmapLegend = dc.heatMap("#heatmapLegend");
+    var mySerieschart = dc.seriesChart("#serieschart");
+    var myCompchart = dc.compositeChart("#compositechart");
+    var startYear=1916;
+    var endYear=2016;
+    $("#YearSlider").rangeSlider({bounds: {min: 1916, max: 2016}},{defaultValues:{min: 1916, max: 2016}});
+
+    $("#YearSlider").bind("valuesChanging", function(e, data){
+            startYear = (Math.round(Number(data.values.min)));
+            
+            endYear = (Math.round(Number(data.values.max)));
+        
+            createGraph(genreObj);
+        });
+    genreObj={};
+    createGraph(genreObj);
+
+    $(".divGenre").change(function(){
+
+            genreObj={};
+
+            $("input:checkbox[name=type]:checked").each(function(){
+                        
+                        genreObj[$(this).val()]=true;
+             });
+        createGraph(genreObj);
+
+    })
+
+    
+        function isContain(objgenre, genreList){
+            var arr= genreList.split("|");
+            for(var i=0; i<arr.length;i++){
+                    if(objgenre.hasOwnProperty(arr[i].trim().toLowerCase())){
+
+                        console.log("the sdsadsasdas "+arr[i].trim().toLowerCase());
+
+                        return true;
+                    }
+            }
+
+            return false;
+        }
+
+        var temp;
+        var  newtemp;
+    function createGraph(genreObj){
+
+            d3.csv("movie_metadata_orig.csv", function(error, data) {
+                callbackError = error;
+                callbackData = data;
+                newdata=[];
+                data.forEach(function(d) {
+                    if((JSON.stringify(genreObj)==="{}" || isContain(genreObj,d["genres"])) &&(Math.round(d["title_year"]) >= startYear && Math.round(d["title_year"]) <= endYear)){
+                        newdata.push(d);
+                    }
+
+                });
+                data=newdata;
+                data.forEach(function(d) {
+                        d.title_year =+d["title_year"];
+                        d.gross =+d["gross"];
+                        d.budget =+d["budget"];
+                        d.content_rating = d["content_rating"];
+                        d.imdb_score =+d["imdb_score"];
+                        d.num_voted_users =+d["num_voted_users"];
+                });
+
+                newdata = data;
+
+        // crossfilter
+        var ndx = crossfilter(data),
+            // x dimension for histogram
+            yearDim = ndx.dimension(function(d) { return +d.title_year; }),
+            movieCountHisto = yearDim.group().reduceCount(),
+
+            mpaaDim = ndx.dimension(function(d) { return d.content_rating; }),
+            mpaaCountPie = mpaaDim.group().reduceCount(),
+
+            imdbDim = ndx.dimension(function(d) { return +d.imdb_score; }),
+            imdbCountHisto = imdbDim.group().reduceCount(),
+
+            // scatterplot dimensions
+            scatterDim = ndx.dimension(function(d) { return [+d.budget, +d.gross]; }),
+
+
+            // heatmap
+            imdbMpaaDim = ndx.dimension(function(d) { return [+d.imdb_score, d.content_rating]; }),
+            grossHeat = imdbMpaaDim.group().reduceSum(function(d) { return +d.gross; });
+
+            // series chart
+            mpaaYearDim = ndx.dimension(function(d) { return [d.content_rating, +d.title_year]; }),
+            imdbGroupSeries = mpaaYearDim.group().reduce(
+                /* callback for when data is added to the current filter results */
+                function (p, v) {
+                    ++p.count;
+                    p.sum+= +v.imdb_score;
+                    p.average = (p.sum / p.count);
+                    return p;
+                },
+                /* callback for when data is removed from the current filter results */
+                function (p, v) {
+                    --p.count;
+                    p.sum-= +v.imdb_score;
+                    p.average = (p.sum / p.count);
+                    return p;
+                },
+                /* initialize p */
+                function () {
+                    return {
+                        count: 0,
+                        sum: 0,
+                        average: 0
+                    };
+                }
+            ),
+
+            // composite chart
+            imdbDim2 = ndx.dimension(function(d) { return +d.imdb_score; }),
+            grossCompLine = imdbDim2.group().reduce(
+                /* callback for when data is added to the current filter results */
+                function (p, v) {
+                    ++p.count;
+                    p.sum+= +v.gross;
+                    p.average = (p.sum / p.count);
+                    return p;
+                },
+                /* callback for when data is removed from the current filter results */
+                function (p, v) {
+                    --p.count;
+                    p.sum-= +v.gross;
+                    p.average = (p.sum / p.count);
+                    return p;
+                },
+                /* initialize p */
+                function () {
+                    return {
+                        count: 0,
+                        sum: 0,
+                        average: 0
+                    };
+                }
+            ),
+            numVotersCompLine = imdbDim2.group().reduce(
+                /* callback for when data is added to the current filter results */
+                function (p, v) {
+                    ++p.count;
+                    p.sum+= +v.num_voted_users;
+                    p.average = (p.sum / p.count);
+                    return p;
+                },
+                /* callback for when data is removed from the current filter results */
+                function (p, v) {
+                    --p.count;
+                    p.sum-= +v.num_voted_users;
+                    p.average = (p.sum / p.count);
+                    return p;
+                },
+                /* initialize p */
+                function () {
+                    return {
+                        count: 0,
+                        sum: 0,
+                        average: 0
+                    };
+                }
+            );
+
+        var allData = ndx.groupAll();
+
+        // count all the facts
+        dc.dataCount(".dc-data-count")
+            .dimension(ndx)
+            .group(allData);
+
+
+        // histogram attributes
+        myHistogram
+            .width(1100)
+            .height(400)
+            .margins({top: 0, right: 50, bottom: 40, left: 40})
+            .x(d3.scale.linear().domain([1916, 2017]))
+            .xAxisLabel("Year")
+            .yAxisLabel("Number of Movies")
+            .brushOn(false)
+            .elasticY(true) // scales y axis values from interactions
+            .dimension(yearDim)
+            .group(movieCountHisto)
+            .centerBar(false)
+            .controlsUseVisibility(true)
+            .ordinalColors(["#128bb5"])
+            .renderHorizontalGridLines(true)
+            .title(function(d) { // probing
+                return 'Year: ' + d.key + '\n'
+                + 'Number of Movies: ' + d.value;
+            })
+            .xAxis().tickFormat(d3.format("d"));
+
+        myHistogram2
+            .width(1100)
+            .height(400)
+            .margins({top: 0, right: 50, bottom: 40, left: 40})
+            .x(d3.scale.ordinal())
+            .xUnits(dc.units.ordinal)
+            .xAxisLabel("IMDb Score")
+            .yAxisLabel("Number of Movies")
+            .brushOn(false) // disable select/brushing
+            .elasticY(true) // scales y axis values from interactions
+            .dimension(imdbDim)
+            .group(imdbCountHisto)
+            .centerBar(false)
+            .controlsUseVisibility(true)
+            .ordinalColors(["#deb522"])
+            .renderHorizontalGridLines(true)
+            .title(function(d) { // probing
+                return 'IMDb Score: ' + d.key + '\n'
+                + 'Number of Movies: ' + d.value;
+            })
+            .xAxis().tickFormat(d3.format(".1f"));;
+
+
+        myPiechart
+            .width(800)
+            .height(400)
+            .innerRadius(100)
+            .dimension(mpaaDim)
+            .group(mpaaCountPie)
+            .colors(d3.scale.category20())
+            .legend(dc.legend().itemHeight(20));
+
+   myPiechart.on('pretransition', function(chart) {
+            myPiechart.selectAll('.dc-legend-item text')
+            .text('')
+            .append('tspan')
+            .text(function(d) { return d.name; })
+            .append('tspan')
+            .attr('x', 100)
+            .attr('text-anchor', 'end')
+            .text(function(d) { return d.data; });
+        });
+
+          console.log(data);  
+        // scatterplot attributes
+        myScatterplot // brushOn is true by default
+            .width(1100)
+            .height(400)
+            .brushOn(false)
+            .margins({top: 10, right: 50, bottom: 40, left: 80})
+            .y(d3.scale.linear().domain([0, 800000000]))
+            .x(d3.scale.linear().domain([0, 310000000]))
+            .xAxisLabel("Budget (USD)")
+            .yAxisLabel("Domestic Box Office Gross (USD)")
+            .clipPadding(10)
+            .dimension(scatterDim)
+            .group(scatterDim.group())
+            .ordinalColors(["#deb522"]) // change color to red
+            .excludedOpacity(0.7)
+            .excludedColor("#aaa")
+            .title(function(d) { // probing
+                return 'Budget (USD): ' + d.key[0] + '\n'
+                + 'Domestic Box Office Gross (USD): ' + d.key[1]+ '\n'
+                + 'Movie Title: ' + $.grep(data, function(obj){return obj.budget === d.key[0] && obj.gross ===d.key[1] ;})[0]['movie_title']+ '\n' + 'IMDB Rating: '+ $.grep(data, function(obj){return obj.budget === d.key[0] && obj.gross ===d.key[1] ;})[0]['imdb_score'];
+            })// deselected values change to gray
+        
+        // set min and max heat values, find range value
+        var heatMaxValue = 4600000000;
+        var heatMinValue = 0;
+        var heatRangeValue = heatMaxValue - heatMinValue;
+
+        // get each value for probing the legend
+        var heatValues = [];
+        for (var i = 0; i < 45; i++) {
+            heatValues.push( { 
+                val: heatMinValue + i / 44 * heatRangeValue,
+                index: i
+            });
+        }
+
+        var heat = crossfilter(heatValues);
+
+        var heatmapLegendDim = heat.dimension(function(d) {
+            return [d.index, 1];
+        });
+
+        var heatmapLegendGroup = heatmapLegendDim.group().reduceSum(function(d) {
+            return d.val;
+        });
+
+        // create a color mapping for heatmap of min and max value of domains to range between set of colors
+        var heatmapColorMap = function(d) {
+            return d3.scale.linear().domain([heatMinValue, heatMaxValue]).range(["#deb522", "#128bb5"])(d);
+        };
+
+        heatmapColorMap.domain = function() {
+            return [heatMinValue, heatMaxValue];
+        };
+        // **end heatmap legend data
+
+        // heatmap attributes
+        myHeatmap
+            .width(1100)
+            .height(400)
+            .margins({top: 0, right: 50, bottom: 20, left: 70})
+            .dimension(imdbMpaaDim)
+            .group(grossHeat)
+            .xBorderRadius(0) // 0 gets full rectangles
+            .yBorderRadius(0)
+            .keyAccessor(function(d) { return +d.key[0]; })
+            .valueAccessor(function(d) { return d.key[1]; })
+            .colorAccessor(function(d) { return +d.value; })
+            .title(function(d) { // probing
+                return 'IMDb Score: ' + d.key[0] + '\n'
+                + 'MPAA Rating: ' + d.key[1] + '\n'
+                + 'Domestic Gross: ' + d.value; })
+            .colors(heatmapColorMap)
+            .calculateColorDomain();
+
+        // heatmap legend attributes
+        myHeatmapLegend
+            .width(1100)
+            .height(50)
+            .margins({top: 0, right: 50, bottom: 10, left: 70})
+            .dimension(heatmapLegendDim)
+            .group(heatmapLegendGroup)
+            .xBorderRadius(0) // 0 gets full rectangles
+            .yBorderRadius(0)
+            .boxOnClick(function(d) { return; }) // Disable clicking
+            .rowsLabel(function(d) { return "Color Legend"; })
+            .colsLabel(function(d){ return null; })
+            .keyAccessor(function(d) { return d.key[0]; })
+            .valueAccessor(function(d) { return d.key[1]; })
+            .colorAccessor(function(d) { return d.value; })
+            .title(function(d) { // probing
+                return 'Domestic Gross: ' + Math.round(d.value); })
+            .colors(heatmapColorMap)
+            .calculateColorDomain();
+
+
+        // series chart of content ratings lines and imdb score (y) over years (x) 
+        mySerieschart
+            .width(1100)
+            .height(400)
+            .margins({top: 0, right: 50, bottom: 40, left: 30})
+            .x(d3.scale.linear().domain([1916, 2016]))
+            .brushOn(false)
+            .xAxisLabel("Year")
+            .yAxisLabel("Average IMDb Score")
+            .clipPadding(10)
+            .elasticY(true)
+            .dimension(mpaaYearDim)
+            .group(imdbGroupSeries)
+            .renderHorizontalGridLines(true)
+            .renderVerticalGridLines(true)
+            .colors(d3.scale.category20())
+            .seriesAccessor(function(d) {return "MPAA Rating: " + d.key[0]; })
+            .keyAccessor(function(d) { return +d.key[1]; })
+            .valueAccessor(function(d) { return +d.value.average; })
+            .legend(dc.legend().x(50).y(150).itemHeight(14).gap(5).horizontal(1).legendWidth(300).itemWidth(150))
+            .title(function(d) { // probing
+                return 'MPAA Rating: ' + d.key[0] + '\n'
+                + 'Year: ' + d.key[1] + '\n'
+                + 'Average IMDb Score: ' + d.value.average; })
+            .xAxis().tickFormat(d3.format("d"));
+
+
+        // composite couble axis line chart of avg. gross and avg. number of imdb votes over imdb rating
+        myCompchart
+            .width(1050)
+            .height(400)
+            // .transitionDuration(1000)
+            .margins({top: 0, right: 80, bottom: 40, left: 80})
+            .dimension(imdbDim2)
+            .shareTitle(false)
+            .x(d3.scale.linear().domain([1.6, 9.3]))
+            .elasticY(true)
+            .renderHorizontalGridLines(true)
+            .renderVerticalGridLines(true)
+            .legend(dc.legend().x(100).y(10).itemHeight(14).gap(5))
+            .brushOn(false)
+            .compose([
+                dc.lineChart(myCompchart)
+                    .group(grossCompLine, "Average Gross")
+                    .valueAccessor(function (d) { return d.value.average; })
+                    .title(function(d) { // probing
+                        return 'IMDb Score: ' + d.key + '\n'
+                        + 'Average Gross: ' + d.value.average; })
+                    .ordinalColors(["#128bb5"]),
+                dc.lineChart(myCompchart)
+                    .group(numVotersCompLine, "Average Number of IMDb Votes")
+                    .valueAccessor(function (d) { return d.value.average; })
+                    .title(function(d) { // probing
+                        return 'IMDb Score: ' + d.key + '\n'
+                        + 'Average Number of IMDb Votes: ' + d.value.average; })
+                    .ordinalColors(["#deb522"])
+                    .useRightYAxis(true)
+            ])
+            .xAxisLabel("IMDb Score")
+            .yAxisLabel("Average Gross")
+            .rightYAxisLabel("Average Number of IMDb Votes");
+
+
+        // render everything
+        dc.renderAll();
+    })
+
+    }
+
+    </script>
+</div>
+</body>
+
+</html>
