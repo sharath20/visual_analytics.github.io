@@ -1,0 +1,5 @@
+title_year,budget,gross,content_rating,imdb_score,num_voted_users,movie_title,genres
+2000,100000000,500000000,Action|Adventure,7.5,100000,Sample Movie A,"Action|Adventure"
+2010,50000000,120000000,R,6.8,45000,Sample Movie B,"Drama|Thriller"
+1999,20000000,40000000,PG,5.9,30000,Sample Movie C,"Comedy|Romance"
+2015,150000000,900000000,PG-13,8.1,200000,Sample Movie D,"Sci-Fi|Action"
